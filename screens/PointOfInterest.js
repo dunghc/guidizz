@@ -11,6 +11,7 @@ import {colors, fontSize} from '../config/styles'
 import {SETTINGS} from '../config/settings'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import Map from '../components/Map'
 
 export default class PointOfInterest extends React.Component {
 
@@ -36,7 +37,10 @@ export default class PointOfInterest extends React.Component {
             prevPoint: 0,
             myPositionLat: 0,
             myPositionLong: 0,
-            circuitID: 0
+            circuitID: 0,
+            townName: '',
+            townLat: 0,
+            townLong: 0
         }
     }
 
@@ -47,7 +51,10 @@ export default class PointOfInterest extends React.Component {
             allOrderNumber : nextProps.navigation.state.params.allOrderNumber,
             myPositionLat: nextProps.navigation.state.paramas.myPositionLat,
             myPositionLong: nextProps.navigation.state.params.myPositionLong,
-            circuitID: nextProps.navigation.state.params.circuitID
+            circuitID: nextProps.navigation.state.params.circuitID,
+            townName: nextProps.navigation.state.params.townName,
+            townLat: nextProps.navigation.state.params.townLat,
+            townLong: nextProps.navigation.state.params.townLong
         })
     }
 
@@ -78,7 +85,10 @@ export default class PointOfInterest extends React.Component {
                 },
                 myPositionLat: this.props.navigation.state.params.myPositionLat,
                 myPositionLong: this.props.navigation.state.params.myPositionLong,
-                circuitID: this.props.navigation.state.params.circuitID
+                circuitID: this.props.navigation.state.params.circuitID,
+                townName: this.props.navigation.state.params.townName,
+                townLat: this.props.navigation.state.params.townLat,
+                townLong: this.props.navigation.state.params.townLong,
             })
         }, function() {
             
@@ -221,24 +231,14 @@ export default class PointOfInterest extends React.Component {
                                 </TouchableHighlight>
                             </View>
                         </View>
-                        <View style={{height: 400}}>
-                            <MapView                            
-                                provider={PROVIDER_GOOGLE}
-                                style={styles.map}
-                                region={{
-                                    latitude: Number(this.state.data.locationLat),
-                                    longitude: Number(this.state.data.locationLong),
-                                    latitudeDelta: 0.0400,
-                                    longitudeDelta: 0.0200,
-                                }}
-                                showsUserLocation= {true}
-                            >
-                            <MapView.Marker
-                                coordinate={{latitude:Number(this.state.data.locationLat), longitude:Number(this.state.data.locationLong)}}
-                            />
-                            </MapView>
-                        </View>
 
+                        <Map 
+                            positionLat={this.state.townLat} 
+                            positionLong={this.state.townLong}
+                            markerCoordinates={{latitude:Number(this.state.data.locationLat), longitude:Number(this.state.data.locationLong)}}
+                            markerName={this.state.data.name}
+                        />
+          
                     </ScrollView>
                     <Footer />
                 </View>

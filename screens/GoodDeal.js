@@ -2,7 +2,7 @@
  * Importation des modules nécessaires depuis React Native
  */
 import React from 'react'
-import { ListView, Image, ScrollView, View, Text, StyleSheet } from 'react-native'
+import { ActivityIndicator, ListView, Image, ScrollView, View, Text, StyleSheet } from 'react-native'
 /**
  * Importation des modules persos depuis nos différents dossiers
  */
@@ -31,11 +31,6 @@ export default class GoodDeal extends React.Component {
         }
     }
 
-    // On récupère les données passées en paramètres dans la navigation
-    componentWillReceiveProps(nextProps) {
-
-    }
-
     componentDidMount() {
 
         fetch(REQUEST_URL)
@@ -59,59 +54,69 @@ export default class GoodDeal extends React.Component {
         
 
     render() {
-        return (
-            <View style={{flex: 1}}>
-                <ScrollView>
-                    <View>
 
-                        <Header subtitle='Les bons plans !' />
+        // Si la page est en cours de chargement, on affiche le loader
+        if(this.state.isLoading) {
+            return (
+                <View style={{flex: 1, paddingTop: 50}}>
+                    <ActivityIndicator />
+                </View>
+            )
+        } else {
+            return (
+                <View style={{flex: 1}}>
+                    <ScrollView>
+                        <View>
 
-                        <View style={{padding: 25}}>
-                            <View style={styles.divTexteHaut}>
-                                <View style={{textAlign: 'center'}}>
-                                    <Text style={styles.fenetreTitre}>Découvrez les bons plans du moment !</Text>
+                            <Header subtitle='Les bons plans !' />
+
+                            <View style={{padding: 25}}>
+                                <View style={styles.divTexteHaut}>
+                                    <View style={{textAlign: 'center'}}>
+                                        <Text style={styles.fenetreTitre}>Découvrez les bons plans du moment !</Text>
+                                    </View>
                                 </View>
                             </View>
+
+                            <ListView
+                                dataSource={this.state.dataSource}
+                                renderRow={(rowData) =>
+                                <View style={styles.divContainer}>
+                                    <View style={styles.divFlex}>
+
+                                        <View style={styles.divImg}>
+                                            <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:rowData.imageurl}} />
+                                        </View>
+
+                                        <View style={styles.divTexte}>
+
+                                            <View style={styles.divDescription}>
+                                                <Text style={styles.texteDescription}>{rowData.description}</Text>
+                                            </View>
+
+
+                                            <View style={styles.divDate}>                                                    
+                                                <Text style={{textAlign: 'right', color: '#fff'}}>
+                                                Valable du {new Date(rowData.begindate).toLocaleDateString()} au {new Date(rowData.enddate).toLocaleDateString()}
+                                                </Text> 
+                                            </View>
+
+                                        </View>
+
+                                    </View>
+                                </View>
+                                }
+                                />
+
                         </View>
 
-                        <ListView
-                            dataSource={this.state.dataSource}
-                            renderRow={(rowData) =>
-                            <View style={styles.divContainer}>
-                                <View style={styles.divFlex}>
+                        
 
-                                    <View style={styles.divImg}>
-                                        <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:rowData.imageurl}} />
-                                    </View>
-
-                                    <View style={styles.divTexte}>
-
-                                        <View style={styles.divDescription}>
-                                            <Text style={styles.texteDescription}>{rowData.description}</Text>
-                                        </View>
-
-
-                                        <View style={styles.divDate}>                                                    
-                                            <Text style={{textAlign: 'right', color: '#fff'}}>
-                                            Valable du {new Date(rowData.begindate).toLocaleDateString()} au {new Date(rowData.enddate).toLocaleDateString()}
-                                            </Text> 
-                                        </View>
-
-                                    </View>
-
-                                </View>
-                            </View>
-                            }
-                            />
-
-                    </View>
-
-                    
-
-                </ScrollView>
-                <Footer />
-            </View>
-        )
+                    </ScrollView>
+                    <Footer />
+                </View>
+            )
+        }
     }
 }
 

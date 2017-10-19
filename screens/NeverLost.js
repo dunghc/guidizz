@@ -11,6 +11,7 @@ import {colors, fontSize} from '../config/styles'
 import {SETTINGS} from '../config/settings'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import Map from '../components/Map'
 
 // J'initialise une variable state
 let state = {
@@ -29,9 +30,21 @@ export default class NeverLost extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
+    // On récupère les données passées en paramètres dans la navigation
+    componentWillReceiveProps(nextProps) {
+        this.props.navigation.setOptions({
+            townName: nextProps.navigation.state.params.townName,
+            townLat: nextProps.navigation.state.params.townLat,
+            townLong: nextProps.navigation.state.params.townLong,
+        })
+    }
+
     componentDidMount() {
         this.setState({
-            isLoading: false
+            isLoading: false,
+            townName: this.props.navigation.state.params.townName,
+            townLat: this.props.navigation.state.params.townLat,
+            townLong: this.props.navigation.state.params.townLong,
         })
     }
 
@@ -79,6 +92,15 @@ export default class NeverLost extends React.Component {
                     
                     <View>
                         {!this.state.isPositionSaved ?
+                        <View>
+                            <View style={{padding: 25}}>
+                                <View style={styles.divTexteHaut}>
+                                    <View style={{textAlign: 'center'}}>
+                                        <Text style={styles.fenetreTitre}>Je sauvegarde ma position de départ</Text>
+                                    </View>
+                                </View>
+                            </View>
+
                             <View style={styles.button}>
                                 <TouchableHighlight onPress={() => this.handleClick('register')}>
                                     <View>
@@ -86,8 +108,18 @@ export default class NeverLost extends React.Component {
                                     </View>
                                 </TouchableHighlight>
                             </View>
+                        </View>
                         :
                             <View>
+
+                                <View style={{padding: 25}}>
+                                    <View style={styles.divTexteHaut}>
+                                        <View style={{textAlign: 'center'}}>
+                                            <Text style={styles.fenetreTitre}>Je modifie ou j'efface la position sauvegardée</Text>
+                                        </View>
+                                    </View>
+                                </View>
+
                                 <View style={styles.flexDiv}> 
                                     <View style={styles.button}>
                                         <TouchableHighlight onPress={() => Alert.alert(
@@ -133,24 +165,13 @@ export default class NeverLost extends React.Component {
                                     </View>
                                 </View>
 
-                                <View style={{height: 400}}>
-                                    <MapView                            
-                                        provider={PROVIDER_GOOGLE}
-                                        style={styles.map}
-                                        region={{
-                                            latitude: Number(this.state.myPositionLat),
-                                            longitude: Number(this.state.myPositionLong),
-                                            latitudeDelta: 0.0400,
-                                            longitudeDelta: 0.0200,
-                                        }}
-                                        showsUserLocation= {true}
-                                    >
-                                    <MapView.Marker
-                                        coordinate={{latitude:Number(this.state.myPositionLat), longitude:Number(this.state.myPositionLong)}}
-                                    />
-                                    </MapView>
-                                </View>
 
+                                <Map 
+                                    positionLat={this.state.townLat} 
+                                    positionLong={this.state.townLong}
+                                    markerCoordinates={{latitude:Number(this.state.myPositionLat), longitude:Number(this.state.myPositionLong)}}
+                                    markerName='Ma position sauvegardée'
+                                />
 
                             </View>
                         }
@@ -172,6 +193,10 @@ const styles = StyleSheet.create({
     map : {
       ...StyleSheet.absoluteFillObject,
       height: 400
+    },
+    fenetreTitre: {
+        fontSize: 22,
+        textAlign: 'center'
     },
     title : {
         color: colors.noir,

@@ -86,10 +86,12 @@ export default class Summary extends React.Component {
 
                     <Header subtitle={this.state.data.subTitle} home={true} />
 
+                   
+
                     <View style={styles.flexDiv}>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('GuidedTour', {town : this.state.data.name})}>
-                                <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}>
+                            <TouchableHighlight onPress= {() => navigate('GuidedTour', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                                <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/route.png')}
                                             style={{flex: 1, width: undefined, height: undefined}}
@@ -100,8 +102,8 @@ export default class Summary extends React.Component {
                             </TouchableHighlight>
                         </View>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('GoodDeal')}>
-                                <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}>
+                            <TouchableHighlight onPress= {() => navigate('GoodDeal', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                                <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/tag.png')}
                                             style={{flex: 1, width: undefined, height: undefined}}
@@ -112,8 +114,8 @@ export default class Summary extends React.Component {
                             </TouchableHighlight>
                         </View>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('Informations')}>
-                                <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}>
+                            <TouchableHighlight onPress= {() => navigate('Informations', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                                <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/infos.png')}
                                             style={{flex: 1, width: undefined, height: undefined}}
@@ -124,8 +126,8 @@ export default class Summary extends React.Component {
                             </TouchableHighlight>
                         </View>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('Diary')}>
-                                <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}>
+                            <TouchableHighlight onPress= {() => navigate('Diary', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                                <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/calendar.png')}
                                             style={{flex: 1, width: undefined, height: undefined}}
@@ -136,8 +138,8 @@ export default class Summary extends React.Component {
                             </TouchableHighlight>
                         </View>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('Parking', {town : this.state.data.name})}>
-                                <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}>
+                            <TouchableHighlight onPress= {() => navigate('Parking', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                                <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/parking.png')}
                                             style={{flex: 1, width: undefined, height: undefined}}
@@ -148,8 +150,8 @@ export default class Summary extends React.Component {
                             </TouchableHighlight>
                         </View>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('NeverLost')}>
-                                <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}>
+                            <TouchableHighlight onPress= {() => navigate('NeverLost', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                                <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/perdsplus.png')}
                                             style={{flex: 1, width: undefined, height: undefined}}
@@ -179,7 +181,7 @@ export default class Summary extends React.Component {
  */
 const styles = StyleSheet.create({
     flexDiv: {
-        flex: 0,
+        flex: 1,
         justifyContent: 'space-around',
         alignItems: 'center',
         flexDirection: 'row',
@@ -190,7 +192,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         backgroundColor: colors.violet,
         height: 100,
-        margin: '0.5%'
+        margin: '0.5%',
     },
     summaryDescription : {
         marginBottom: 10,

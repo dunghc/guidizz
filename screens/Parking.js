@@ -11,6 +11,7 @@ import {colors, fontSize} from '../config/styles'
 import {SETTINGS} from '../config/settings'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import Map from '../components/Map'
 
 // URL d'importation des données depuis l'API WP
 const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/parking`
@@ -22,7 +23,9 @@ export default class Parking extends React.Component {
         // On initialise le state
         this.state = {
             isLoading : true,
-            town : '',
+            townName : '',
+            townLat: 0,
+            townLong: 0,
             markers: null
         }
     }
@@ -30,7 +33,9 @@ export default class Parking extends React.Component {
     // On récupère les données passées en paramètres dans la navigation
     componentWillReceiveProps(nextProps) {
         this.props.navigation.setOptions({
-            town: nextProps.navigation.state.params.town
+            townName: nextProps.navigation.state.params.townName,
+            townLat: nextProps.navigation.state.params.townLat,
+            townLong: nextProps.navigation.state.params.townLong,
         })
     }
 
@@ -53,7 +58,7 @@ export default class Parking extends React.Component {
                     isFree: point.free,
                     horaires: point.openinghours,
                     prix: point.prices,
-                    description: point.description
+                    name: point.description
                     
                 }
             ))
@@ -61,7 +66,9 @@ export default class Parking extends React.Component {
             // On met à jour le state avec les données reçues
             this.setState({
                 isLoading : false,
-                town: this.props.navigation.state.params.town,
+                townName: this.props.navigation.state.params.townName,
+                townLat: this.props.navigation.state.params.townLat,
+                townLong: this.props.navigation.state.params.townLong,
                 markers: coordinates
             })
         })
@@ -87,7 +94,7 @@ export default class Parking extends React.Component {
 
                     <View style={{padding: 25}}>
 
-                        <Text style={styles.title}>Liste des parkings à {this.state.town}</Text>
+                        <Text style={styles.title}>Liste des parkings à {this.state.townName}</Text>
 
                         <Text><Image source={require('../images/pin.png')}
                                style={{flex: 1, width: 25, height: 25, tintColor: '#2894F2' }}
@@ -98,30 +105,22 @@ export default class Parking extends React.Component {
                                resizeMode='contain' /> Parking <Text style={{fontWeight: '700'}}>payant</Text>
                         </Text>
                     </View>
+
+
                     
-                    <View>
-                        <MapView
-                            provider={PROVIDER_GOOGLE}
-                            style={styles.map}
-                            region={{
-                                latitude: 43.788631,
-                                longitude: 4.096214,
-                                latitudeDelta: 0.0400,
-                                longitudeDelta: 0.0200,
-                            }}
-                            showsUserLocation= {true}
-                            toolbarEnabled={true}
-                        >
-                        {this.state.markers.map(marker =>(
-                        <MapView.Marker
-                            key={marker.id}
-                            coordinate= {marker.coordinates}
+                    <Map 
+                        positionLat={this.state.townLat} 
+                        positionLong={this.state.townLong}
+                        multipleMarkers={true}
+                        markers={this.state.markers}
+                        isParking={true}
+                    />
+                    {/* TODO ENLEVER CE CODE QUAND INTEGRE
+
                             pinColor={marker.isFree == 1 && '#2894F2' || marker.isFree == 0 && '#FA2B1A'}
                             description={`${marker.description} | Prix : ${marker.isFree == 0 && marker.prix || marker.isFree == 1 && 'Parking gratuit'} | Horaires : ${marker.horaires}`}
-                        />
-                        ))}
-                        </MapView>
-                    </View>
+  
+                    */}
 
                     
 

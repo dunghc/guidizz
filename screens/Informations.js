@@ -11,6 +11,7 @@ import {colors, fontSize} from '../config/styles'
 import {SETTINGS} from '../config/settings'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import Map from '../components/Map'
 
 // URL d'importation des données depuis l'API WP
 const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/settings`
@@ -107,26 +108,12 @@ export default class Informations extends React.Component {
                         </View>
                     </View>
 
-                    <View style={{height:400}}>
-                        <MapView
-                        provider={PROVIDER_GOOGLE} 
-                        style={styles.map}
-                        region={{
-                            latitude: this.state.data.locationLat,
-                            longitude: this.state.data.locationLong,
-                            latitudeDelta: 0.0400,
-                            longitudeDelta: 0.0200,
-                        }}
-                        showsUserLocation= {true}
-                        >
-                        <MapView.Marker
-                        coordinate={{latitude: this.state.data.locationLat, longitude: this.state.data.locationLong}}
-                        title={this.state.data.name}
-                        description={`${this.state.data.type} de ${this.state.data.name} | ${this.state.data.address}`}
-                        />
-                        </MapView>
-                    </View>
-
+                    <Map 
+                        positionLat={Number(this.state.data.locationLat)} 
+                        positionLong={Number(this.state.data.locationLong)}
+                        markerCoordinates={{latitude: this.state.data.locationLat, longitude: this.state.data.locationLong}}
+                        markerName={`${this.state.data.type} de ${this.state.data.name} | ${this.state.data.address}`}
+                    />
                     
                 </ScrollView>
                 <Footer />

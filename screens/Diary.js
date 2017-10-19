@@ -2,7 +2,7 @@
  * Importation des modules nécessaires depuis React Native
  */
 import React from 'react'
-import { ListView, Image, ScrollView, View, Text, StyleSheet } from 'react-native'
+import { ActivityIndicator, ListView, Image, ScrollView, View, Text, StyleSheet } from 'react-native'
 /**
  * Importation des modules persos depuis nos différents dossiers
  */
@@ -31,11 +31,6 @@ export default class Diary extends React.Component {
         }
     }
 
-    // On récupère les données passées en paramètres dans la navigation
-    componentWillReceiveProps(nextProps) {
-
-    }
-
     componentDidMount() {
 
         fetch(REQUEST_URL)
@@ -59,67 +54,77 @@ export default class Diary extends React.Component {
         
 
     render() {
-        return (
-            <View style={{flex: 1}}>
-                <ScrollView>
-                    <View>
 
-                        <Header subtitle='Les bons plans !' />
+        // Si la page est en cours de chargement, on affiche le loader
+        if(this.state.isLoading) {
+            return (
+                <View style={{flex: 1, paddingTop: 50}}>
+                    <ActivityIndicator />
+                </View>
+            )
+        } else {
+            return (
+                <View style={{flex: 1}}>
+                    <ScrollView>
+                        <View>
 
-                        <View style={{padding: 25}}>
-                            <View style={styles.divTexteHaut}>
-                                <View style={{textAlign: 'center'}}>
-                                    <Text style={styles.fenetreTitre}>Découvrez les événements à venir !</Text>
+                            <Header subtitle='Les bons plans !' />
+
+                            <View style={{padding: 25}}>
+                                <View style={styles.divTexteHaut}>
+                                    <View style={{textAlign: 'center'}}>
+                                        <Text style={styles.fenetreTitre}>Découvrez les événements à venir !</Text>
+                                    </View>
                                 </View>
                             </View>
+
+                            <ListView
+                                dataSource={this.state.dataSource}
+                                renderRow={(rowData) =>
+                                <View style={styles.divContainer}>
+                                    <View style={styles.divFlex}>
+
+                                        <View style={styles.divImg}>
+                                            <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:rowData.imageurl}} />
+                                        </View>
+
+                                        <View style={styles.divTexte}>
+
+                                            <View style={styles.divTitre}>
+                                                <Text style={styles.texteTitre}>{rowData.title}</Text>
+                                            </View>
+
+                                            <View style={styles.divDescription}>
+                                                <Text style={styles.texteDescription}>{rowData.description}</Text>
+                                            </View>
+
+
+                                            <View style={styles.divDate}>                                                    
+                                                <Text style={{textAlign: 'right', color: '#fff'}}>
+                                                {new Date(rowData.begindate).toLocaleDateString() != new Date(rowData.enddate).toLocaleDateString() ?    
+                                                    <Text>Du {`${new Date(rowData.begindate).toLocaleDateString()}`} au {`${new Date(rowData.enddate).toLocaleDateString()}`}</Text> 
+                                                :
+                                                    <Text>Le {`${new Date(rowData.begindate).toLocaleDateString()}`} </Text>
+                                                }
+                                                </Text> 
+                                            </View>
+
+                                        </View>
+
+                                    </View>
+                                </View>
+                                }
+                                />
+
                         </View>
 
-                        <ListView
-                            dataSource={this.state.dataSource}
-                            renderRow={(rowData) =>
-                            <View style={styles.divContainer}>
-                                <View style={styles.divFlex}>
+                        
 
-                                    <View style={styles.divImg}>
-                                        <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:rowData.imageurl}} />
-                                    </View>
-
-                                    <View style={styles.divTexte}>
-
-                                        <View style={styles.divTitre}>
-                                            <Text style={styles.texteTitre}>{rowData.title}</Text>
-                                        </View>
-
-                                        <View style={styles.divDescription}>
-                                            <Text style={styles.texteDescription}>{rowData.description}</Text>
-                                        </View>
-
-
-                                        <View style={styles.divDate}>                                                    
-                                            <Text style={{textAlign: 'right', color: '#fff'}}>
-                                            {new Date(rowData.begindate).toLocaleDateString() != new Date(rowData.enddate).toLocaleDateString() ?    
-                                                <Text>Du {`${new Date(rowData.begindate).toLocaleDateString()}`} au {`${new Date(rowData.enddate).toLocaleDateString()}`}</Text> 
-                                            :
-                                                <Text>Le {`${new Date(rowData.begindate).toLocaleDateString()}`} </Text>
-                                            }
-                                            </Text> 
-                                        </View>
-
-                                    </View>
-
-                                </View>
-                            </View>
-                            }
-                            />
-
-                    </View>
-
-                    
-
-                </ScrollView>
-                <Footer />
-            </View>
-        )
+                    </ScrollView>
+                    <Footer />
+                </View>
+            )
+        }
     }
 }
 

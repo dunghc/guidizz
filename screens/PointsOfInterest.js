@@ -2,7 +2,7 @@
  * Importation des modules nécessaires depuis React Native
  */
 import React from 'react'
-import { Image, ScrollView, TouchableHighlight, ListView, ActivityIndicator, Button, View, Text, StyleSheet } from 'react-native'
+import { Image, ScrollView, TouchableHighlight, ListView, ActivityIndicator, View, Text, StyleSheet } from 'react-native'
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps'
 import Geolib from 'geolib'
 import {getDistance} from 'geolib'
@@ -13,6 +13,7 @@ import {colors, fontSize} from '../config/styles'
 import {SETTINGS} from '../config/settings'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import Map from '../components/Map'
 
 export default class PointsOfInterest extends React.Component {
 
@@ -26,6 +27,9 @@ export default class PointsOfInterest extends React.Component {
         // On initialise le state
         this.state = {
             myPosition: 0,
+            townName: '',
+            townLat: 0,
+            townLong: 0,
             isLoading: true,
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
             markers : [],
@@ -42,6 +46,9 @@ export default class PointsOfInterest extends React.Component {
     // On récupère les données passées en paramètres dans la navigation
     componentWillReceiveProps(nextProps) {
         this.props.navigation.setOptions({
+            townName: nextProps.navigation.state.params.townName,
+            townLat: nextProps.navigation.state.params.townLat,
+            townLong: nextProps.navigation.state.params.townLong,
             circuitID: nextProps.navigation.state.params.circuitID,
             circuitName : nextProps.navigation.state.params.circuitName,
             myPositionLong: nextProps.navigation.state.params.myPositionLong,
@@ -94,7 +101,10 @@ export default class PointsOfInterest extends React.Component {
             listOfOrderNumber: tabAllOrderNumber,
             markers: coordinates,
             circuitName : this.props.navigation.state.params.circuitName,
-            circuitID: this.props.navigation.state.params.circuitID  
+            circuitID: this.props.navigation.state.params.circuitID,
+            townName: this.props.navigation.state.params.townName,
+            townLat: this.props.navigation.state.params.townLat,
+            townLong: this.props.navigation.state.params.townLong,
             }, function() {
 
             })
@@ -146,7 +156,7 @@ export default class PointsOfInterest extends React.Component {
                                     dataSource={this.state.dataSource}
                                     renderRow={(rowData) =>
                                         
-                                        <TouchableHighlight onPress={ () => navigate('PointOfInterest', {orderNumber: rowData.ordernumber, allOrderNumber: this.state.listOfOrderNumber, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong, circuitID: this.state.circuitID})}>
+                                        <TouchableHighlight onPress={ () => navigate('PointOfInterest', {townName: this.state.townName, townLat: this.state.townLat, townLong: this.state.townLong, orderNumber: rowData.ordernumber, allOrderNumber: this.state.listOfOrderNumber, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong, circuitID: this.state.circuitID})}>
                                                 <View style={styles.button}>
                                                     <Text style={styles.buttonText}> {` ${this.calculerDistance(Number(rowData.locationlat).toFixed(6), Number(rowData.locationlong).toFixed(6) )} | ${rowData.name}`}                             
                                                     </Text>
@@ -158,27 +168,14 @@ export default class PointsOfInterest extends React.Component {
                                     }
                                 />
                             </View>
-                            <View style={{height: 400}}>
-                                <MapView
-                                    provider={PROVIDER_GOOGLE}
-                                    style={styles.map}
-                                    region={{
-                                        latitude: 43.788631,
-                                        longitude: 4.096214,
-                                        latitudeDelta: 0.0200,
-                                        longitudeDelta: 0.0200,
-                                    }}
-                                    showsUserLocation= {true}
-                                >
-                                {this.state.markers.map(marker =>(
-                                <MapView.Marker
-                                    key={marker.id}
-                                    coordinate= {marker.coordinates}
-                                    description= {marker.name}
-                                />
-                                ))}
-                                </MapView>
-                            </View>
+
+                            <Map 
+                                positionLat={this.state.townLat} 
+                                positionLong={this.state.townLong}
+                                multipleMarkers={true}
+                                markers={this.state.markers}
+                            />
+
                         </View>
                     </ScrollView>
 

@@ -28,7 +28,9 @@ export default class GuidedTour extends React.Component {
         // On initalise le state
         this.state = {
             isLoading: true,
-            town : '',
+            townName : '',
+            townLat: 0,
+            townLong: 0,
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
             myPositionLat: 0,
             myPositionLong: 0
@@ -38,7 +40,9 @@ export default class GuidedTour extends React.Component {
     // On récupère les données passées en paramètres dans la navigation
     componentWillReceiveProps(nextProps) {
         this.props.navigation.setOptions({
-            town: nextProps.navigation.state.params.town
+            townName: nextProps.navigation.state.params.townName,
+            townLat: nextProps.navigation.state.params.townLat,
+            townLong: nextProps.navigation.state.params.townLong,
         })
     }
 
@@ -58,7 +62,9 @@ export default class GuidedTour extends React.Component {
             // On met à jour le state avec les données reçues
             this.setState({
             isLoading: false,
-            town: this.props.navigation.state.params.town,
+            townName: this.props.navigation.state.params.townName,
+            townLat: this.props.navigation.state.params.townLat,
+            townLong: this.props.navigation.state.params.townLong,
             dataSource: this.state.dataSource.cloneWithRows(responseJson),
             }, function() {
             })
@@ -94,7 +100,7 @@ export default class GuidedTour extends React.Component {
                             <View style={{padding: 25}}>
                                 <View style={styles.divTexteHaut}>
                                     <View style={{textAlign: 'center'}}>
-                                        <Text style={styles.fenetreTitre}>Découvrez la liste des visite guidées du moment</Text>
+                                        <Text style={styles.fenetreTitre}>Découvrez la liste des visites guidées du moment</Text>
                                     </View>
                                 </View>
                             </View>
@@ -103,7 +109,7 @@ export default class GuidedTour extends React.Component {
                                 <ListView
                                     dataSource={this.state.dataSource}
                                     renderRow={(rowData) => 
-                                        <TouchableHighlight style={styles.divContainer} onPress={() => navigate('PointsOfInterest', {circuitID : rowData.ID, id: rowData.ID, circuitName: rowData.title, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong})}>
+                                        <TouchableHighlight style={styles.divContainer} onPress={() => navigate('PointsOfInterest', {townName: this.state.townName, townLat: this.state.townLat, townLong: this.state.townLong, circuitID : rowData.ID, id: rowData.ID, circuitName: rowData.title, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong})}>
                                             
                                             <View style={styles.divFlex}>
 
