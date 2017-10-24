@@ -2,7 +2,7 @@
  * Importation des modules nécessaires depuis React Native
  */
 import React from 'react'
-import { ActivityIndicator, ListView, Image, ScrollView, View, Text, StyleSheet } from 'react-native'
+import { TouchableHighlight, ActivityIndicator, ListView, Image, ScrollView, View, Text, StyleSheet } from 'react-native'
 /**
  * Importation des modules persos depuis nos différents dossiers
  */
@@ -10,16 +10,12 @@ import {colors, fontSize} from '../config/styles'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import {SETTINGS} from '../config/settings'
+import Map from '../components/Map'
 
-/**
- * URL D'importation des données depuis l'API
- */
-const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/diary`
-
-export default class Diary extends React.Component {
+export default class GoodDealDetails extends React.Component {
 
     static navigationOptions = {
-        title: 'Bons plans',
+        title: 'Bon plan',
     }
 
     constructor(props) {
@@ -27,20 +23,41 @@ export default class Diary extends React.Component {
         // On initalise le state
         this.state = {
             isLoading: true,
-            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+            description: '',
+            imageurl: '',
+            locationlat: 0,
+            locationlong: 0,
+            begindate: null,
+            enddate: null
         }
+        
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.props.navigation.setOptions({
+            id: nextProps.navigation.state.params.id
+        })
     }
 
     componentDidMount() {
+
+        /**
+         * URL D'importation des données depuis l'API
+         */
+        const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/gooddeal/${this.props.navigation.state.params.id}`
 
         fetch(REQUEST_URL)
         .then((response) => response.json())
         .then((responseJson) => {
             // On met à jour le state avec les données reçues
             this.setState({
-            isLoading: false,
-            dataSource: this.state.dataSource.cloneWithRows(responseJson),
-            }, function() {
+                isLoading: false,
+                description: responseJson[0].description,
+                imageurl: responseJson[0].imageurl,
+                locationlat: responseJson[0].locationlat,
+                locationlong: responseJson[0].locationlong,
+                begindate: responseJson[0].begindate,
+                enddate: responseJson[0].enddate
             })
         })
         .catch((error) => {
@@ -73,48 +90,43 @@ export default class Diary extends React.Component {
                             <View style={{padding: 25}}>
                                 <View style={styles.divTexteHaut}>
                                     <View style={{textAlign: 'center'}}>
-                                        <Text style={styles.fenetreTitre}>Découvrez les événements à venir !</Text>
+                                        <Text style={styles.fenetreTitre}>Découvrez ce bon plan !</Text>
                                     </View>
                                 </View>
                             </View>
 
-                            <ListView
-                                dataSource={this.state.dataSource}
-                                renderRow={(rowData) =>
-                                <View style={styles.divContainer}>
+                            <View style={styles.divContainer}>
                                     <View style={styles.divFlex}>
 
                                         <View style={styles.divImg}>
-                                            <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:rowData.imageurl}} />
+                                            <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:this.state.imageurl}} />
                                         </View>
 
                                         <View style={styles.divTexte}>
-                                            <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={require('../images/calendar_big.png')}>
-                                                <View style={styles.divTitre}>
-                                                    <Text style={styles.texteTitre}>{rowData.title}</Text>                                                
-                                                    <Text style={styles.texteSousTitre}>
-                                                    {new Date(rowData.begindate).toLocaleDateString() != new Date(rowData.enddate).toLocaleDateString() ?    
-                                                        <Text>Du {`${new Date(rowData.begindate).toLocaleDateString()}`} au {`${new Date(rowData.enddate).toLocaleDateString()}`}</Text> 
-                                                    :
-                                                        <Text>Le {`${new Date(rowData.begindate).toLocaleDateString()}`} </Text>
-                                                    }
-                                                    </Text> 
+                                            <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={require('../images/tag_big.png')}>
+                                                <View style={styles.divDescription}>
+                                                    <Text style={styles.texteDescription}>{this.state.description}</Text>
                                                 </View>
 
-                                                <View style={styles.divDescription}>
-                                                    <Text style={styles.texteDescription}>{rowData.description}</Text>
+                                                <View style={styles.divDate}>                                                    
+                                                    <Text style={{textAlign: 'right', color: '#fff'}}>
+                                                    Valable du {new Date(this.state.begindate).toLocaleDateString()} au {new Date(this.state.enddate).toLocaleDateString()}
+                                                    </Text> 
                                                 </View>
-                                            </Image>                    
+                                            </Image>
                                         </View>
 
                                     </View>
-                                </View>
-                                }
-                                />
+                            </View>
 
+                            <Map 
+                                positionLat={this.state.locationlat} 
+                                positionLong={this.state.locationlong}
+                                markerCoordinates={{latitude:Number(this.state.locationlat), longitude:Number(this.state.locationlong)}}
+                                markerName={this.state.description}
+                            />
+                            
                         </View>
-
-                        
 
                     </ScrollView>
                     <Footer />
@@ -160,16 +172,9 @@ const styles = StyleSheet.create({
     },
     texteTitre : {
         color: '#fff',
-        fontSize: 22,
+        fontSize: 20,
         marginLeft: 20,
         marginTop: 10,
-        backgroundColor: 'transparent'
-    },
-    texteSousTitre: {
-        color: '#fff',
-        fontSize: 18,
-        marginLeft: 20,
-        marginTop: 5,
         backgroundColor: 'transparent'
     },
     divTitre : {
@@ -183,10 +188,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginLeft: 20,
         marginTop: 10,
-        marginBottom: 10,
+        marginBottom: 30,
         backgroundColor: 'transparent'
     },
     divDate: {
+        position: 'absolute',
+        bottom: 0,
         margin: 5
     }
 })

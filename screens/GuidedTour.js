@@ -110,36 +110,34 @@ export default class GuidedTour extends React.Component {
                                     dataSource={this.state.dataSource}
                                     renderRow={(rowData) => 
                                         <TouchableHighlight style={styles.divContainer} onPress={() => navigate('PointsOfInterest', {townName: this.state.townName, townLat: this.state.townLat, townLong: this.state.townLong, circuitID : rowData.ID, id: rowData.ID, circuitName: rowData.title, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong})}>
-                                            
-                                            <View style={styles.divFlex}>
+                                                <View style={styles.divFlex}>
 
-                                                <View style={styles.divImg}>
-                                                    <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:rowData.imageurl}} />
+                                                    <View style={styles.divImg}>
+                                                        <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:rowData.imageurl}} />
+                                                    </View>
+
+                                                    <View style={styles.divTexte}>
+                                                        <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={require('../images/route_big.png')}>
+                                                            <View style={styles.divTitre}>
+                                                                <Text style={styles.texteTitre}>{rowData.title}</Text>
+                                                            </View>
+
+                                                            <View style={styles.divDescription}>
+                                                                <Text style={styles.texteDescription}>{rowData.description}</Text>
+                                                            </View>
+
+
+                                                            <View style={styles.divIcones}>                                                    
+                                                                <Text style={{textAlign: 'right'}}>
+                                                                    {rowData.familialcircuit == 1 && <Image style={{width: 25, height: 25, marginRight: 5}} source={require('../images/poussette.png')} /> }
+                                                                    {rowData.usablebydisabledperson == 1 && <Image style={{width: 25, height: 25, marginRight: 5}} source={require('../images/disabled.png')} /> }
+                                                                    {rowData.difficultylevel == 1 && <Image style={styles.level} source={require('../images/level1.png')}/> || rowData.difficultylevel == 2 && <Image style={styles.level} source={require('../images/level2.png')}/> || rowData.difficultylevel == 3 && <Image style={styles.level} source={require('../images/level3.png')}/> }
+                                                                </Text> 
+                                                            </View>
+                                                        </Image>
+                                                    </View>
+
                                                 </View>
-
-                                                <View style={styles.divTexte}>
-
-                                                    <View style={styles.divTitre}>
-                                                        <Text style={styles.texteTitre}>{rowData.title}</Text>
-                                                    </View>
-
-                                                    <View style={styles.divDescription}>
-                                                        <Text style={styles.texteDescription}>{rowData.description}</Text>
-                                                    </View>
-
-
-                                                    <View style={styles.divIcones}>                                                    
-                                                        <Text style={{textAlign: 'right'}}>
-                                                            {rowData.familialcircuit == 1 && <Image style={{width: 25, height: 25, marginRight: 5}} source={require('../images/poussette.png')} /> }
-                                                            {rowData.usablebydisabledperson == 1 && <Image style={{width: 25, height: 25, marginRight: 5}} source={require('../images/disabled.png')} /> }
-                                                            {rowData.difficultylevel == 1 && <Image style={styles.level} source={require('../images/level1.png')}/> || rowData.difficultylevel == 2 && <Image style={styles.level} source={require('../images/level2.png')}/> || rowData.difficultylevel == 3 && <Image style={styles.level} source={require('../images/level3.png')}/> }
-                                                        </Text> 
-                                                    </View>
-
-                                                </View>
-
-                                            </View>
-
                                         </TouchableHighlight> 
                                         
                                     }
@@ -174,7 +172,8 @@ const styles = StyleSheet.create({
         height: 180,
         backgroundColor: colors.violet,
         marginTop: 5,
-        marginBottom: 5
+        marginBottom: 5,
+        justifyContent: 'flex-end'
     },
     divFlex: {
         flex: 1,
@@ -186,13 +185,16 @@ const styles = StyleSheet.create({
     },
     divTexte : {
         flex: 1,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        width: '100%',
+        minHeight: 180
     },
     texteTitre : {
         color: '#fff',
         fontSize: 20,
         marginLeft: 20,
-        marginTop: 10
+        marginTop: 10,
+        backgroundColor: 'transparent'
     },
     divTitre : {
         width: '100%'
@@ -204,7 +206,9 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 14,
         marginLeft: 20,
-        marginTop: 10
+        marginTop: 10,
+        paddingRight: 10,
+        backgroundColor: 'transparent'
     },
     divIcones : {
         position: 'absolute',

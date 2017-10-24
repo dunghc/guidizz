@@ -164,6 +164,12 @@ export default class Summary extends React.Component {
 
                     </View>
 
+                    <View style={styles.descriptionDiv}>
+
+                        <Text style={styles.descriptionTitre}>{this.state.data.name} :</Text>
+                        <Text style={styles.descriptionTexte}>{this.state.data.description}</Text>
+                    </View>
+
                    
                 </ScrollView> 
                 <Footer />
@@ -180,6 +186,15 @@ export default class Summary extends React.Component {
  * Style de l'écran
  */
 const styles = StyleSheet.create({
+    descriptionDiv: {
+        margin: '0.5%'
+    },
+    descriptionTitre: {
+        fontSize: 22
+    },
+    descriptionTexte: {
+        fontSize: 18
+    },
     flexDiv: {
         flex: 1,
         justifyContent: 'space-around',

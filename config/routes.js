@@ -15,6 +15,7 @@ import Parking from '../screens/Parking'
 import PointOfInterest from '../screens/PointOfInterest'
 import PointsOfInterest from '../screens/PointsOfInterest'
 import NeverLost from '../screens/NeverLost'
+import GoodDealDetails from '../screens/GoodDealDetails'
 
 /* écran d'accueil */
 export const HomeStack =  StackNavigator({
@@ -48,5 +49,8 @@ export const HomeStack =  StackNavigator({
     },
     NeverLost : {
         screen: NeverLost,
+    },
+    GoodDealDetails: {
+        screen: GoodDealDetails
     }
 })

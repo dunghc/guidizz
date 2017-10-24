@@ -24,8 +24,7 @@ export default class Header extends React.Component {
             title : '',
             subtitle : this.props.subtitle,
             imageBackgroundUrl: 'null',
-            isHome : this.props.home,
-            image: '../images/'+this.props.image+'.png'
+            isHome : this.props.home
         }
 
     }
@@ -83,11 +82,6 @@ export default class Header extends React.Component {
                     <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:this.state.imageBackgroundUrl}}>
                         <View style={styles.container}>
                             <View style={{width: '100%', height: 100}}>
-                                <View style={{width: 100, height: 100, marginTop: 10}}>
-                                    <Image  source={{uri: this.state.logo }}
-                                            style={{width: undefined, height: undefined, flex: 1, resizeMode: 'contain'}} 
-                                    />
-                                </View>
                                 <View style={{justifyContent: 'space-around', position: 'absolute', right: 10, top: 10, backgroundColor: '#fff', padding: 5, borderRadius: 5}}> 
                                     <Image source={{uri:'../images/'+this.props.image+'.png'}}
                                             style={{flex: 0, width: 30, height: 30, tintColor: '#000'}}

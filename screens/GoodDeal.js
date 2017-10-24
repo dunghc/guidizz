@@ -2,7 +2,9 @@
  * Importation des modules nécessaires depuis React Native
  */
 import React from 'react'
-import { ActivityIndicator, ListView, Image, ScrollView, View, Text, StyleSheet } from 'react-native'
+import { TouchableHighlight, ActivityIndicator, ListView, Image, ScrollView, View, Text, StyleSheet } from 'react-native'
+
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps'
 /**
  * Importation des modules persos depuis nos différents dossiers
  */
@@ -10,11 +12,13 @@ import {colors, fontSize} from '../config/styles'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import {SETTINGS} from '../config/settings'
+import Map from '../components/Map'
 
 /**
  * URL D'importation des données depuis l'API
  */
 const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/gooddeal`
+
 
 export default class GoodDeal extends React.Component {
 
@@ -27,8 +31,14 @@ export default class GoodDeal extends React.Component {
         // On initalise le state
         this.state = {
             isLoading: true,
-            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
+            isClicked: false,
+            idGoodDeal: 0,
+            locationlat: 0,
+            locationlong: 0
         }
+        
+        //this.handleClick = this.handleClick.bind(this);
     }
 
     componentDidMount() {
@@ -38,8 +48,8 @@ export default class GoodDeal extends React.Component {
         .then((responseJson) => {
             // On met à jour le state avec les données reçues
             this.setState({
-            isLoading: false,
-            dataSource: this.state.dataSource.cloneWithRows(responseJson),
+                isLoading: false,
+                dataSource: this.state.dataSource.cloneWithRows(responseJson),
             }, function() {
             })
         })
@@ -51,9 +61,24 @@ export default class GoodDeal extends React.Component {
         })
 
     }
+
+    handleClick(id, locationlat, locationlong, description) {
+
+        this.setState({
+            isClicked: true,
+            idGoodDeal: Number(id), 
+            locationlat: Number(locationlat),
+            locationlong: Number(locationlong),
+            description: description
+        })
+
+    }
         
 
     render() {
+
+        // On récupère la navigation afin de pouvoir dispatcher sur les boutons ci-dessous
+        const { navigate } = this.props.navigation
 
         // Si la page est en cours de chargement, on affiche le loader
         if(this.state.isLoading) {
@@ -82,35 +107,34 @@ export default class GoodDeal extends React.Component {
                                 dataSource={this.state.dataSource}
                                 renderRow={(rowData) =>
                                 <View style={styles.divContainer}>
-                                    <View style={styles.divFlex}>
+                                    <TouchableHighlight style={styles.divContainer} onPress={() => navigate('GoodDealDetails', {id: rowData.ID})}>
+                                        <View style={styles.divFlex}>
 
-                                        <View style={styles.divImg}>
-                                            <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:rowData.imageurl}} />
-                                        </View>
-
-                                        <View style={styles.divTexte}>
-
-                                            <View style={styles.divDescription}>
-                                                <Text style={styles.texteDescription}>{rowData.description}</Text>
+                                            <View style={styles.divImg}>
+                                                <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:rowData.imageurl}} />
                                             </View>
 
+                                            <View style={styles.divTexte}>
+                                                <Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={require('../images/tag_big.png')}>
+                                                    <View style={styles.divDescription}>
+                                                        <Text style={styles.texteDescription}>{rowData.description}</Text>
+                                                    </View>
 
-                                            <View style={styles.divDate}>                                                    
-                                                <Text style={{textAlign: 'right', color: '#fff'}}>
-                                                Valable du {new Date(rowData.begindate).toLocaleDateString()} au {new Date(rowData.enddate).toLocaleDateString()}
-                                                </Text> 
+                                                    <View style={styles.divDate}>                                                    
+                                                        <Text style={{textAlign: 'right', color: '#fff'}}>
+                                                        Valable du {new Date(rowData.begindate).toLocaleDateString()} au {new Date(rowData.enddate).toLocaleDateString()}
+                                                        </Text> 
+                                                    </View>
+                                                </Image>
                                             </View>
 
                                         </View>
-
-                                    </View>
+                                    </TouchableHighlight>
                                 </View>
                                 }
-                                />
+                            />
 
                         </View>
-
-                        
 
                     </ScrollView>
                     <Footer />
@@ -135,7 +159,7 @@ const styles = StyleSheet.create({
     },
     divContainer: {
         width: '100%',
-        height: 180,
+        minHeight: 180,
         backgroundColor: colors.violet,
         marginTop: 5,
         marginBottom: 5
@@ -146,17 +170,20 @@ const styles = StyleSheet.create({
     },
     divImg : {
         width: '30%',
-        height: 180
+        minHeight: 180
     },
     divTexte : {
         flex: 1,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        width: '100%',
+        minHeight: 180
     },
     texteTitre : {
         color: '#fff',
         fontSize: 20,
         marginLeft: 20,
-        marginTop: 10
+        marginTop: 10,
+        backgroundColor: 'transparent'
     },
     divTitre : {
         width: '100%'
@@ -168,7 +195,9 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 14,
         marginLeft: 20,
-        marginTop: 10
+        marginTop: 10,
+        marginBottom: 30,
+        backgroundColor: 'transparent'
     },
     divDate: {
         position: 'absolute',

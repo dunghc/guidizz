@@ -4,6 +4,7 @@
 import React from 'react'
 import { Alert, Image, TouchableHighlight, ScrollView, ActivityIndicator, Button, View, Text, StyleSheet } from 'react-native'
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps'
+import Lightbox from 'react-native-lightbox'
 /**
  * Importation des modules persos depuis nos différents dossiers
  */
@@ -42,6 +43,8 @@ export default class PointOfInterest extends React.Component {
             townLat: 0,
             townLong: 0
         }
+
+        this.handleClick = this.handleClick.bind(this);
     }
 
     // On récupère les données passées en paramètres dans la navigation
@@ -148,6 +151,12 @@ export default class PointOfInterest extends React.Component {
 
     }
 
+    handleClick(panoramicUrl) {
+
+        console.log(panoramicUrl)
+        
+    }
+
 
     render() {
         // On récupère le module de navigation
@@ -173,7 +182,7 @@ export default class PointOfInterest extends React.Component {
                         <View style={styles.longText}><Text>{this.state.data.description}</Text></View>
 
                         {/* Si le point d'intérêt dispose d'une image panoramic, nous affichons un bouton afin de proposer à l'utilisateur de la voir */}
-                        <View>{this.state.data.isPanoramic == 1 && <Button title='Voir la photo panoramique' onPress={function() { console.log('ok') }}/> }</View>
+                        <View>{this.state.data.isPanoramic == 1 && <Button title='Voir la photo panoramique' onPress={this.handleClick(this.state.data.panoramicImageUrl)}/>}</View>
                         
                         <View style={styles.buttonContainer}>
                             <View style={styles.button}>

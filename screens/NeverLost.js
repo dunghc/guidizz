@@ -96,17 +96,22 @@ export default class NeverLost extends React.Component {
                             <View style={{padding: 25}}>
                                 <View style={styles.divTexteHaut}>
                                     <View style={{textAlign: 'center'}}>
-                                        <Text style={styles.fenetreTitre}>Je sauvegarde ma position de départ</Text>
+                                        <Text style={styles.fenetreTitre}>Je ne me perds plus !</Text>
+                                    </View>
+                                    <View style={{textAlign: 'center'}}>
+                                        <Text style={styles.fenetreSousTitre}>Enregistrer votre position actuelle afin de pouvoir y revenir facilement à la fin de votre promenade !</Text>
                                     </View>
                                 </View>
                             </View>
 
-                            <View style={styles.button}>
-                                <TouchableHighlight onPress={() => this.handleClick('register')}>
-                                    <View>
-                                        <Text style={styles.buttonText}>J'enregistre ma position</Text>
-                                    </View>
-                                </TouchableHighlight>
+                            <View style={{flex: 1, alignItems: 'center'}}>
+                                <View style={styles.button}>
+                                    <TouchableHighlight onPress={() => this.handleClick('register')}>
+                                        <View>
+                                            <Text style={styles.buttonText}>J'enregistre ma position actuelle</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                </View>
                             </View>
                         </View>
                         :
@@ -117,14 +122,24 @@ export default class NeverLost extends React.Component {
                                         <View style={{textAlign: 'center'}}>
                                             <Text style={styles.fenetreTitre}>Je modifie ou j'efface la position sauvegardée</Text>
                                         </View>
+                                        <View style={{textAlign: 'center'}}>
+                                            <Text style={styles.fenetreSousTitre}>Vous pouvez enregistrer et modifier à tout moment votre position afin d'y revenir facilement !</Text>
+                                        </View>
                                     </View>
-                                </View>
+                                </View>                              
+                                
+                                <Map 
+                                    positionLat={this.state.townLat} 
+                                    positionLong={this.state.townLong}
+                                    markerCoordinates={{latitude:Number(this.state.myPositionLat), longitude:Number(this.state.myPositionLong)}}
+                                    markerName='Ma position sauvegardée'
+                                />
 
                                 <View style={styles.flexDiv}> 
                                     <View style={styles.button}>
                                         <TouchableHighlight onPress={() => Alert.alert(
                                                     'Confirmation',
-                                                    'Effacer la position enregistrée ?',
+                                                    'Souhaitez-vous effacer votre position enregistrée précédemment ?',
                                                     [
                                                         {text: 'Non', onPress: () => console.log('Non'), style: 'cancel'},
                                                         {text: 'Oui', onPress: () => this.handleClick('delete')},
@@ -132,7 +147,7 @@ export default class NeverLost extends React.Component {
                                                     { cancelable: false }
                                                 )}>
                                             <View>
-                                                <Text style={styles.buttonText}>J'efface ma position</Text>
+                                                <Text style={styles.buttonText}>J'efface ma position sauvegardée</Text>
                                             </View>
                                         </TouchableHighlight>
                                     </View>
@@ -157,21 +172,21 @@ export default class NeverLost extends React.Component {
                                         </TouchableHighlight>
                                     </View>
                                     <View style={styles.button}>
-                                        <TouchableHighlight onPress={() => this.handleClick('update')}>
-                                            <View>
-                                                <Text style={styles.buttonText}>Je mets à jour ma position</Text>
-                                            </View>
-                                        </TouchableHighlight>
+                                    <TouchableHighlight onPress={() => Alert.alert(
+                                        'Confirmation',
+                                        'Souhaitez-vous modifier votre position sauvegardée par votre position actuelle ?',
+                                        [
+                                            {text: 'Non', onPress: () => console.log('Non'), style: 'cancel'},
+                                            {text: 'Oui', onPress: () => this.handleClick('update')},
+                                        ],
+                                        { cancelable: false }
+                                    )}>
+                                <View>
+                                    <Text style={styles.buttonText}>Je mets à jour ma position sauvegardée</Text>
+                                </View>
+                            </TouchableHighlight>
                                     </View>
                                 </View>
-
-
-                                <Map 
-                                    positionLat={this.state.townLat} 
-                                    positionLong={this.state.townLong}
-                                    markerCoordinates={{latitude:Number(this.state.myPositionLat), longitude:Number(this.state.myPositionLong)}}
-                                    markerName='Ma position sauvegardée'
-                                />
 
                             </View>
                         }
@@ -198,6 +213,11 @@ const styles = StyleSheet.create({
         fontSize: 22,
         textAlign: 'center'
     },
+    fenetreSousTitre: {
+        fontSize: 16,
+        textAlign: 'center',
+        padding: 5
+    },
     title : {
         color: colors.noir,
         fontSize : fontSize.subTitle,
@@ -216,7 +236,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.violet,
         justifyContent: 'center',
         width: '38%',
-        height: 50,
+        height: 100,
         padding: 5,
         margin: '1%',
     },
@@ -234,8 +254,8 @@ const styles = StyleSheet.create({
         marginBottom: 25
     },
     buttonSimple: {
-        width: '8%',
-        height: 50,
+        width: '18%',
+        height: 100,
         backgroundColor: colors.violet,
         justifyContent: 'center',
         padding: 5,

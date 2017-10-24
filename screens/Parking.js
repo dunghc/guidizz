@@ -106,8 +106,6 @@ export default class Parking extends React.Component {
                         </Text>
                     </View>
 
-
-                    
                     <Map 
                         positionLat={this.state.townLat} 
                         positionLong={this.state.townLong}
@@ -115,14 +113,6 @@ export default class Parking extends React.Component {
                         markers={this.state.markers}
                         isParking={true}
                     />
-                    {/* TODO ENLEVER CE CODE QUAND INTEGRE
-
-                            pinColor={marker.isFree == 1 && '#2894F2' || marker.isFree == 0 && '#FA2B1A'}
-                            description={`${marker.description} | Prix : ${marker.isFree == 0 && marker.prix || marker.isFree == 1 && 'Parking gratuit'} | Horaires : ${marker.horaires}`}
-  
-                    */}
-
-                    
 
                 </ScrollView>
                 <Footer />
