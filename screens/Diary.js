@@ -11,10 +11,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import {SETTINGS} from '../config/settings'
 
-/**
- * URL D'importation des données depuis l'API
- */
-const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/diary`
+
 
 export default class Diary extends React.Component {
 
@@ -31,7 +28,19 @@ export default class Diary extends React.Component {
         }
     }
 
+    // On récupère les données passées en paramètres dans la navigation
+    componentWillReceiveProps(nextProps) {
+        this.props.navigation.setOptions({
+            townUrl: nextProps.navigation.state.params.townUrl
+        })
+    }
+
     componentDidMount() {
+
+        /**
+         * URL D'importation des données depuis l'API
+         */
+        const REQUEST_URL = `${this.props.navigation.state.params.townUrl}${SETTINGS.APIURL}${SETTINGS.VERSION}/diary`
 
         fetch(REQUEST_URL)
         .then((response) => response.json())

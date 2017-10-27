@@ -9,10 +9,7 @@ import { View, Text, StyleSheet, Image, Dimensions } from 'react-native'
 import {colors, fontSize} from '../config/styles'
 import {SETTINGS} from '../config/settings'
 
-/**
- * URL D'importation des données depuis l'API
- */
-const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/settings`
+
 
 export default class Header extends React.Component {
    
@@ -26,10 +23,15 @@ export default class Header extends React.Component {
             imageBackgroundUrl: 'null',
             isHome : this.props.home
         }
-
     }
 
     componentDidMount() {
+
+        /**
+         * URL D'importation des données depuis l'API
+         */
+        const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/settings`
+
         // On récupère les données depuis l'API WP grâce à la méthode fetch
         fetch(REQUEST_URL)
         .then((response) => response.json())
@@ -83,10 +85,6 @@ export default class Header extends React.Component {
                         <View style={styles.container}>
                             <View style={{width: '100%', height: 100}}>
                                 <View style={{justifyContent: 'space-around', position: 'absolute', right: 10, top: 10, backgroundColor: '#fff', padding: 5, borderRadius: 5}}> 
-                                    <Image source={{uri:'../images/'+this.props.image+'.png'}}
-                                            style={{flex: 0, width: 30, height: 30, tintColor: '#000'}}
-                                            resizeMode='contain' 
-                                    />
                                     <Text style={styles.title}>{this.state.title}</Text>
                                     <Text style={styles.subtitle}>{this.state.subtitle}</Text>
                                 </View>

@@ -35,7 +35,8 @@ export default class GoodDealDetails extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         this.props.navigation.setOptions({
-            id: nextProps.navigation.state.params.id
+            id: nextProps.navigation.state.params.id,
+            townUrl: nextProps.navigation.state.params.townUrl
         })
     }
 
@@ -44,7 +45,7 @@ export default class GoodDealDetails extends React.Component {
         /**
          * URL D'importation des données depuis l'API
          */
-        const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/gooddeal/${this.props.navigation.state.params.id}`
+        const REQUEST_URL = `${this.props.navigation.state.params.townUrl}${SETTINGS.APIURL}${SETTINGS.VERSION}/gooddeal/${this.props.navigation.state.params.id}`
 
         fetch(REQUEST_URL)
         .then((response) => response.json())

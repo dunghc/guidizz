@@ -4,7 +4,7 @@
 import React from 'react'
 import { Alert, Image, TouchableHighlight, ScrollView, ActivityIndicator, Button, View, Text, StyleSheet } from 'react-native'
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps'
-import Lightbox from 'react-native-lightbox'
+
 /**
  * Importation des modules persos depuis nos différents dossiers
  */
@@ -13,6 +13,7 @@ import {SETTINGS} from '../config/settings'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Map from '../components/Map'
+import PanoramicImage from '../components/PanoramicImage'
 
 export default class PointOfInterest extends React.Component {
 
@@ -39,12 +40,16 @@ export default class PointOfInterest extends React.Component {
             myPositionLat: 0,
             myPositionLong: 0,
             circuitID: 0,
+            circuitName: '',
             townName: '',
             townLat: 0,
-            townLong: 0
+            townLong: 0,
+            isHidden: true,
+            isPanoramicClicked: false
         }
 
-        this.handleClick = this.handleClick.bind(this);
+        this.handleClick = this.handleClick.bind(this)
+        this.handleClickPanoramic = this.handleClickPanoramic.bind(this)
     }
 
     // On récupère les données passées en paramètres dans la navigation
@@ -54,16 +59,18 @@ export default class PointOfInterest extends React.Component {
             allOrderNumber : nextProps.navigation.state.params.allOrderNumber,
             myPositionLat: nextProps.navigation.state.paramas.myPositionLat,
             myPositionLong: nextProps.navigation.state.params.myPositionLong,
+            circuitName: nextProps.navigation.state.params.circuitName,
             circuitID: nextProps.navigation.state.params.circuitID,
             townName: nextProps.navigation.state.params.townName,
             townLat: nextProps.navigation.state.params.townLat,
-            townLong: nextProps.navigation.state.params.townLong
+            townLong: nextProps.navigation.state.params.townLong,
+            townUrl: nextProps.navigation.state.params.townUrl
         })
     }
 
     componentDidMount() {
         // URL de requête de l'API
-        const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/pointofinterest/${this.props.navigation.state.params.orderNumber}`
+        const REQUEST_URL = `${this.props.navigation.state.params.townUrl}${SETTINGS.APIURL}${SETTINGS.VERSION}/pointofinterest/${this.props.navigation.state.params.orderNumber}`
 
         fetch(REQUEST_URL)
         .then((response) => response.json())
@@ -89,6 +96,7 @@ export default class PointOfInterest extends React.Component {
                 myPositionLat: this.props.navigation.state.params.myPositionLat,
                 myPositionLong: this.props.navigation.state.params.myPositionLong,
                 circuitID: this.props.navigation.state.params.circuitID,
+                circuitName: this.props.navigation.state.params.circuitName,
                 townName: this.props.navigation.state.params.townName,
                 townLat: this.props.navigation.state.params.townLat,
                 townLong: this.props.navigation.state.params.townLong,
@@ -151,9 +159,33 @@ export default class PointOfInterest extends React.Component {
 
     }
 
-    handleClick(panoramicUrl) {
+    handleClick(isHidden) {
 
-        console.log(panoramicUrl)
+        // On gère la bascule de texte
+        if(isHidden == 'afficher') {
+            this.setState({
+                isHidden: false
+            })
+        } else {
+            this.setState({
+                isHidden: true
+            })
+        }
+        
+    }
+
+    handleClickPanoramic(panoramicClicked) {
+        
+        // On gère la photo panoramique
+        if(panoramicClicked == 'afficher') {
+            this.setState({
+                isPanoramicClicked: true
+            })
+        } else {
+            this.setState({
+                isPanoramicClicked: false
+            })
+        }
         
     }
 
@@ -179,14 +211,57 @@ export default class PointOfInterest extends React.Component {
                         
                         <View style={{width: '100%', height: 200, marginTop: 10, marginBottom: 10}}><Image style={{width: undefined, height: undefined, flex: 1, resizeMode: 'cover'}} source={{uri:this.state.data.imageUrl}} /></View>
                         
-                        <View style={styles.longText}><Text>{this.state.data.description}</Text></View>
+                        {this.state.isHidden ? 
+                        <View style={styles.buttonContainer}>
+                            <View style={styles.buttonLong}>
+                                <TouchableHighlight onPress={() => this.handleClick('afficher')}> 
+                                    <View>
+                                        <View>
+                                            <Text style={styles.buttonText}>Découvrir plus d'informations sur {this.state.townName}</Text>
+                                        </View>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+
+                        :
+
+                        <View style={styles.buttonContainer}>
+                            <View style={styles.buttonLong}>
+                                <TouchableHighlight onPress={() => this.handleClick('cacher')}> 
+                                    <View>
+                                        <View>
+                                            <Text style={styles.buttonText}>Cacher le texte</Text>
+                                        </View>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+
+                        }
+
+                        {!this.state.isHidden ? 
+                            <View style={styles.longText}><Text>{this.state.data.description}</Text></View>
+                            
+                            :
+
+                            <View style={styles.longText}><Text> </Text></View>
+                        }
+                        
 
                         {/* Si le point d'intérêt dispose d'une image panoramic, nous affichons un bouton afin de proposer à l'utilisateur de la voir */}
-                        <View>{this.state.data.isPanoramic == 1 && <Button title='Voir la photo panoramique' onPress={this.handleClick(this.state.data.panoramicImageUrl)}/>}</View>
+                        <View>
+                        {this.state.data.isPanoramic == 1 &&
+                            <Button title='Voir la photo panoramique' onPress={() => this.handleClickPanoramic('afficher')  } />
+                        }
+                        {this.state.isPanoramicClicked &&
+                            <PanoramicImage panoramicImageUrl={this.state.data.panoramicImageUrl} />
+                        }
                         
+                        </View>
                         <View style={styles.buttonContainer}>
                             <View style={styles.button}>
-                                <TouchableHighlight onPress={() => navigate('PointOfInterest', {town: this.state.town, circuitID : this.state.data.circuitID, id: this.state.prevPoint, allOrderNumber : this.props.navigation.state.params.allOrderNumber,  orderNumber: this.state.prevPoint} )}>
+                                <TouchableHighlight onPress={() => navigate('PointOfInterest', {townUrl: this.props.navigation.state.params.townUrl, townName: this.state.townName, townLat: this.state.townLat, townLong: this.state.townLong, town: this.state.town, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong, circuitName: this.state.circuitName, circuitID : this.state.circuitID, id: this.state.prevPoint, allOrderNumber : this.props.navigation.state.params.allOrderNumber,  orderNumber: this.state.prevPoint} )}>
                                     <View>
                                         <Text style={styles.buttonText}>Précédent</Text>
                                     </View>
@@ -198,7 +273,7 @@ export default class PointOfInterest extends React.Component {
                                         'Revenir à la liste des points d\'intérêts ?',
                                         [
                                             {text: 'Non', onPress: () => console.log('Non'), style: 'cancel'},
-                                            {text: 'Oui', onPress: () => navigate('PointsOfInterest', {town : this.state.town, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong, circuitID: this.state.circuitID})},
+                                            {text: 'Oui', onPress: () => navigate('PointsOfInterest', {townUrl : this.props.navigation.state.params.townUrl, townName: this.state.townName, townLat: this.state.townLat, townLong: this.state.townLong, town : this.state.town, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong, circuitName: this.state.circuitName, circuitID: this.state.circuitID})},
                                         ],
                                         { cancelable: false }
                                     )}
@@ -218,7 +293,7 @@ export default class PointOfInterest extends React.Component {
                                             'Revenir au menu principal ?',
                                             [
                                                 {text: 'Non', onPress: () => console.log('Non'), style: 'cancel'},
-                                                {text: 'Oui', onPress: () => navigate('Summary', {town : this.state.town})},
+                                                {text: 'Oui', onPress: () => navigate('Summary', {townUrl: this.props.navigation.state.params.townUrl, town : this.state.town})},
                                             ],
                                             { cancelable: false }
                                         )}
@@ -233,7 +308,7 @@ export default class PointOfInterest extends React.Component {
                                 </TouchableHighlight>
                             </View>
                             <View style={styles.button}>
-                                <TouchableHighlight onPress={() => navigate('PointOfInterest', {town: this.state.town, circuitID : this.state.data.circuitID, id: this.state.nextPoint, allOrderNumber : this.props.navigation.state.params.allOrderNumber, orderNumber: this.state.nextPoint} )}>
+                                <TouchableHighlight onPress={() => navigate('PointOfInterest', {townUrl: this.props.navigation.state.params.townUrl, townName: this.state.townName, townLat: this.state.townLat, townLong: this.state.townLong, town: this.state.town, circuitName: this.state.circuitName, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong, circuitID : this.state.circuitID, id: this.state.nextPoint, allOrderNumber : this.props.navigation.state.params.allOrderNumber, orderNumber: this.state.nextPoint} )}>
                                     <View>
                                         <Text style={styles.buttonText}>Suivant</Text>
                                     </View>
@@ -280,6 +355,14 @@ const styles = StyleSheet.create({
         backgroundColor: colors.violet,
         justifyContent: 'center',
         width: '38%',
+        height: 50,
+        padding: 5,
+        margin: '1%',
+    },
+    buttonLong : {
+        backgroundColor: colors.violet,
+        justifyContent: 'center',
+        width: '98%',
         height: 50,
         padding: 5,
         margin: '1%',

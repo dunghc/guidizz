@@ -14,10 +14,7 @@ import Footer from '../components/Footer'
 import {SETTINGS} from '../config/settings'
 import Map from '../components/Map'
 
-/**
- * URL D'importation des données depuis l'API
- */
-const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/gooddeal`
+
 
 
 export default class GoodDeal extends React.Component {
@@ -37,11 +34,22 @@ export default class GoodDeal extends React.Component {
             locationlat: 0,
             locationlong: 0
         }
-        
-        //this.handleClick = this.handleClick.bind(this);
+
+    }
+
+    // On récupère les données passées en paramètres dans la navigation
+    componentWillReceiveProps(nextProps) {
+        this.props.navigation.setOptions({
+            townUrl: nextProps.navigation.state.params.townUrl
+        })
     }
 
     componentDidMount() {
+
+        /**
+         * URL D'importation des données depuis l'API
+         */
+        const REQUEST_URL = `${this.props.navigation.state.params.townUrl}${SETTINGS.APIURL}${SETTINGS.VERSION}/gooddeal`
 
         fetch(REQUEST_URL)
         .then((response) => response.json())
@@ -107,7 +115,7 @@ export default class GoodDeal extends React.Component {
                                 dataSource={this.state.dataSource}
                                 renderRow={(rowData) =>
                                 <View style={styles.divContainer}>
-                                    <TouchableHighlight style={styles.divContainer} onPress={() => navigate('GoodDealDetails', {id: rowData.ID})}>
+                                    <TouchableHighlight style={styles.divContainer} onPress={() => navigate('GoodDealDetails', {townUrl: this.props.navigation.state.params.townUrl, id: rowData.ID})}>
                                         <View style={styles.divFlex}>
 
                                             <View style={styles.divImg}>

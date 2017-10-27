@@ -13,8 +13,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Map from '../components/Map'
 
-// URL d'importation des données depuis l'API WP
-const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/parking`
+
 
 export default class Parking extends React.Component {
 
@@ -36,12 +35,14 @@ export default class Parking extends React.Component {
             townName: nextProps.navigation.state.params.townName,
             townLat: nextProps.navigation.state.params.townLat,
             townLong: nextProps.navigation.state.params.townLong,
+            townUrl: nextProps.navigation.state.params.townUrl
         })
     }
 
     componentDidMount() {
+
         // URL de récupération des données depuis l'API
-        const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/parking`
+        const REQUEST_URL = `${this.props.navigation.state.params.townUrl}${SETTINGS.APIURL}${SETTINGS.VERSION}/parking`
 
         fetch(REQUEST_URL)
         .then((response) => response.json())

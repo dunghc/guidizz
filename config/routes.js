@@ -21,7 +21,6 @@ import GoodDealDetails from '../screens/GoodDealDetails'
 export const HomeStack =  StackNavigator({
     Home : {
         screen : Home
-
     },
     Summary : {
         screen : Summary

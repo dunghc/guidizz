@@ -12,17 +12,7 @@ import {SETTINGS} from '../config/settings'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
-/**
- * URL D'importation des données depuis l'API
- */
-const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/settings`
-
 export default class Summary extends React.Component {
-
-    static navigationOptions = ({navigation}) => {
-        const { params = {} } = navigation.state
-        return  { title : params.title }
-    }
 
    
     constructor(props) {
@@ -43,7 +33,21 @@ export default class Summary extends React.Component {
         }
     }
 
+    // On récupère les données passées en paramètres dans la navigation
+    componentWillReceiveProps(nextProps) {
+        this.props.navigation.setOptions({
+            townUrl: nextProps.navigation.state.params.townUrl
+        })
+    }
+
     componentDidMount() {
+
+        /**
+         * URL D'importation des données depuis l'API
+         */
+        const REQUEST_URL = `${this.props.navigation.state.params.townUrl}${SETTINGS.APIURL}${SETTINGS.VERSION}/settings`
+
+
         // On récupère les données depuis l'API WP grâce à la méthode fetch
         fetch(REQUEST_URL)
         .then((response) => response.json())
@@ -64,8 +68,6 @@ export default class Summary extends React.Component {
             })
         })
         .done(() => {
-            // On donne ici comme titre de l'écran le nom de la ville en question
-            this.props.navigation.setParams({title: this.state.data.name})
         })
 
     }
@@ -90,7 +92,7 @@ export default class Summary extends React.Component {
 
                     <View style={styles.flexDiv}>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('GuidedTour', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                            <TouchableHighlight onPress= {() => navigate('GuidedTour', { townUrl: this.props.navigation.state.params.townUrl, townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
                                 <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/route.png')}
@@ -102,7 +104,7 @@ export default class Summary extends React.Component {
                             </TouchableHighlight>
                         </View>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('GoodDeal', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                            <TouchableHighlight onPress= {() => navigate('GoodDeal', { townUrl: this.props.navigation.state.params.townUrl, townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
                                 <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/tag.png')}
@@ -114,7 +116,7 @@ export default class Summary extends React.Component {
                             </TouchableHighlight>
                         </View>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('Informations', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                            <TouchableHighlight onPress= {() => navigate('Informations', { townUrl: this.props.navigation.state.params.townUrl, townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
                                 <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/infos.png')}
@@ -126,7 +128,7 @@ export default class Summary extends React.Component {
                             </TouchableHighlight>
                         </View>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('Diary', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                            <TouchableHighlight onPress= {() => navigate('Diary', { townUrl: this.props.navigation.state.params.townUrl, townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
                                 <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/calendar.png')}
@@ -138,7 +140,7 @@ export default class Summary extends React.Component {
                             </TouchableHighlight>
                         </View>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('Parking', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                            <TouchableHighlight onPress= {() => navigate('Parking', { townUrl: this.props.navigation.state.params.townUrl, townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
                                 <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/parking.png')}
@@ -150,7 +152,7 @@ export default class Summary extends React.Component {
                             </TouchableHighlight>
                         </View>
                         <View style={styles.summaryBoutonsNavigation}>
-                            <TouchableHighlight onPress= {() => navigate('NeverLost', { townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
+                            <TouchableHighlight onPress= {() => navigate('NeverLost', { townUrl: this.props.navigation.state.params.townUrl, townName: this.state.data.name, townLat: Number(this.state.data.locationLat), townLong: Number(this.state.data.locationLong) })}>
                                 <View style={{flex: 0, flexDirection: 'column', justifyContent: 'center'}}>
                                     <View style={{width: '100%', height: 50, marginBottom: 5}}>
                                         <Image source={require('../images/perdsplus.png')}
@@ -166,7 +168,7 @@ export default class Summary extends React.Component {
 
                     <View style={styles.descriptionDiv}>
 
-                        <Text style={styles.descriptionTitre}>{this.state.data.name} :</Text>
+                        <Text style={styles.descriptionTitre}>{this.state.data.name} - description :</Text>
                         <Text style={styles.descriptionTexte}>{this.state.data.description}</Text>
                     </View>
 

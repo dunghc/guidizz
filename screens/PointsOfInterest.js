@@ -52,7 +52,8 @@ export default class PointsOfInterest extends React.Component {
             circuitID: nextProps.navigation.state.params.circuitID,
             circuitName : nextProps.navigation.state.params.circuitName,
             myPositionLong: nextProps.navigation.state.params.myPositionLong,
-            myPositionLat: nextProps.navigation.state.params.myPositionLat
+            myPositionLat: nextProps.navigation.state.params.myPositionLat,
+            townUrl: nextProps.navigation.state.params.townUrl
         })
     }
 
@@ -68,7 +69,7 @@ export default class PointsOfInterest extends React.Component {
         })
 
         // URL de récupération des données depuis l'API
-        const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/circuit/${this.props.navigation.state.params.circuitID}/latitude/${Number(this.props.navigation.state.params.myPositionLat)}/longitude/${Number(this.props.navigation.state.params.myPositionLong)}`
+        const REQUEST_URL = `${this.props.navigation.state.params.townUrl}${SETTINGS.APIURL}${SETTINGS.VERSION}/circuit/${this.props.navigation.state.params.circuitID}/latitude/${Number(this.props.navigation.state.params.myPositionLat)}/longitude/${Number(this.props.navigation.state.params.myPositionLong)}`
 
         fetch(REQUEST_URL)
         .then((response) => response.json())
@@ -156,7 +157,7 @@ export default class PointsOfInterest extends React.Component {
                                     dataSource={this.state.dataSource}
                                     renderRow={(rowData) =>
                                         
-                                        <TouchableHighlight onPress={ () => navigate('PointOfInterest', {townName: this.state.townName, townLat: this.state.townLat, townLong: this.state.townLong, orderNumber: rowData.ordernumber, allOrderNumber: this.state.listOfOrderNumber, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong, circuitID: this.state.circuitID})}>
+                                        <TouchableHighlight onPress={ () => navigate('PointOfInterest', {townUrl: this.props.navigation.state.params.townUrl, townName: this.state.townName, townLat: this.state.townLat, townLong: this.state.townLong, orderNumber: rowData.ordernumber, allOrderNumber: this.state.listOfOrderNumber, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong, circuitName: this.state.circuitName, circuitID: this.state.circuitID})}>
                                                 <View style={styles.button}>
                                                     <Text style={styles.buttonText}> {` ${this.calculerDistance(Number(rowData.locationlat).toFixed(6), Number(rowData.locationlong).toFixed(6) )} | ${rowData.name}`}                             
                                                     </Text>

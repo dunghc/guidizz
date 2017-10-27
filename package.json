@@ -23,6 +23,7 @@
     "react": "16.0.0-alpha.12",
     "react-native": "^0.48.4",
     "react-native-lightbox": "^0.7.0",
+    "react-native-list-view-select": "^1.0.4",
     "react-native-maps": "^0.16.2",
     "react-navigation": "^1.0.0-beta.11"
   }

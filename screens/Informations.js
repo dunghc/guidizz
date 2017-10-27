@@ -13,16 +13,11 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Map from '../components/Map'
 
-// URL d'importation des données depuis l'API WP
-const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/settings`
+
 
 export default class Informations extends React.Component {
 
-    static navigationOptions = ({navigation}) => {
-        const { params = {} } = navigation.state
-        return  { title : params.title }
-    }
-
+    
 
     constructor(props) {
         super(props)
@@ -42,10 +37,22 @@ export default class Informations extends React.Component {
                 email : ''
             }
         }
+
+        console.log(`SITEURL: ${SETTINGS.SITEURL}`)
+    }
+
+    // On récupère les données passées en paramètres dans la navigation
+    componentWillReceiveProps(nextProps) {
+        this.props.navigation.setOptions({
+            townUrl: nextProps.navigation.state.params.townUrl
+        })
     }
 
     componentDidMount() {
         
+        // URL d'importation des données depuis l'API WP
+        const REQUEST_URL = `${this.props.navigation.state.params.townUrl}${SETTINGS.APIURL}${SETTINGS.VERSION}/settings`
+
         fetch(REQUEST_URL)
         .then((response) => response.json())
         .then((responseData) => {
@@ -67,8 +74,6 @@ export default class Informations extends React.Component {
             })
         })
         .done(() => {
-            // On donne ici comme titre de l'écran le nom de la ville en question
-            this.props.navigation.setParams({title: this.state.data.name})
         })
 
     }

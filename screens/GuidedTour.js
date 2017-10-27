@@ -11,11 +11,6 @@ import {SETTINGS} from '../config/settings'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
-/**
- * URL D'importation des données depuis l'API
- */
-const REQUEST_URL = `${SETTINGS.SITEURL}${SETTINGS.APIURL}${SETTINGS.VERSION}/circuit`
-
 
 export default class GuidedTour extends React.Component {
 
@@ -43,10 +38,16 @@ export default class GuidedTour extends React.Component {
             townName: nextProps.navigation.state.params.townName,
             townLat: nextProps.navigation.state.params.townLat,
             townLong: nextProps.navigation.state.params.townLong,
+            townUrl: nextProps.navigation.state.params.townUrl
         })
     }
 
     componentDidMount() {
+
+        /**
+         * URL D'importation des données depuis l'API
+         */
+        const REQUEST_URL = `${this.props.navigation.state.params.townUrl}${SETTINGS.APIURL}${SETTINGS.VERSION}/circuit`
 
         // On récupère la position du visiteur
         this.watchID = navigator.geolocation.watchPosition((position) => {
@@ -109,7 +110,7 @@ export default class GuidedTour extends React.Component {
                                 <ListView
                                     dataSource={this.state.dataSource}
                                     renderRow={(rowData) => 
-                                        <TouchableHighlight style={styles.divContainer} onPress={() => navigate('PointsOfInterest', {townName: this.state.townName, townLat: this.state.townLat, townLong: this.state.townLong, circuitID : rowData.ID, id: rowData.ID, circuitName: rowData.title, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong})}>
+                                        <TouchableHighlight style={styles.divContainer} onPress={() => navigate('PointsOfInterest', {townUrl : this.props.navigation.state.params.townUrl, townName: this.state.townName, townLat: this.state.townLat, townLong: this.state.townLong, circuitID : rowData.ID, id: rowData.ID, circuitName: rowData.title, myPositionLat: this.state.myPositionLat, myPositionLong: this.state.myPositionLong})}>
                                                 <View style={styles.divFlex}>
 
                                                     <View style={styles.divImg}>

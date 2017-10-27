@@ -36,6 +36,7 @@ export default class NeverLost extends React.Component {
             townName: nextProps.navigation.state.params.townName,
             townLat: nextProps.navigation.state.params.townLat,
             townLong: nextProps.navigation.state.params.townLong,
+            townUrl: nextProps.navigation.state.params.townUrl
         })
     }
 
@@ -75,6 +76,9 @@ export default class NeverLost extends React.Component {
     }
 
     render() {
+
+        // On récupère la navigation afin de pouvoir dispatcher sur les boutons ci-dessous
+        const { navigate } = this.props.navigation
 
         // Si la page est en cours de chargement, on affiche le loader
         if(this.state.isLoading) {
@@ -157,7 +161,7 @@ export default class NeverLost extends React.Component {
                                                     'Revenir au menu principal ?',
                                                     [
                                                         {text: 'Non', onPress: () => console.log('Non'), style: 'cancel'},
-                                                        {text: 'Oui', onPress: () => navigate('Summary', {town : this.state.town})},
+                                                        {text: 'Oui', onPress: () => navigate('Summary', {townUrl: this.props.navigation.state.params.townUrl, town : this.state.town})},
                                                     ],
                                                     { cancelable: false }
                                                 )}
